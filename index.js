@@ -1,20 +1,23 @@
-const http = require('http')
-const fs = require('fs')
-const url = require('url')
+const express = require('express')
+const app = express()
 const port = 8080
 
-const server = http.createServer((req, res) => {
-    const requestedUrl = url.parse(req.url, true)
-    const file = requestedUrl.pathname === '/' ? 'home.html' : `${requestedUrl.pathname.slice(1)}.html`
-
-    fs.readFile(file, 'utf8', (err, data) => {
-        if (err) {
-            res.writeHead(404, 'Content-Type', 'text/html')
-            res.end('<h1>Error</h1><a href="/">Return To Home</a>')
-        }
-        res.writeHead(200, 'Content-Type', 'text/html')
-        res.end(data)
-    })
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/home.html')
 })
 
-server.listen(port)
+app.get('/about', (req, res) => {
+    res.sendFile(__dirname + '/about.html')
+})
+
+app.get('/contact-me', (req, res) => {
+    res.sendFile(__dirname + '/contact-me.html')
+})
+
+app.get('*', (req, res) => {
+    res.send('<h1>Error 404 - Page not found</h1><a href="/">Return To Home</a>')
+})
+
+app.listen(port, () => {
+    console.log(`App listening on port ${port}`)
+})
